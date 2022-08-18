@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:odcg4/NewsResponse.dart';
+import 'package:odcg4/shared.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -66,19 +68,23 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    PreferenceUtils.init();
     getHttp();
   }
 
   void getHttp() async {
     try {
-      var response = await Dio().post(
-          'https://lavie.orangedigitalcenteregypt.com/api/v1/auth/signup',
-          data: {
-            "firstName": "string",
-            "lastName": "string",
-            "email": "string",
-            "password": "string"
-          });
+      var response = await Dio()
+          .post('https://lavie.orangedigitalcenteregypt.com/api/v1/auth/signup',
+              data: {
+                "firstName": "string",
+                "lastName": "string",
+                "email": "string",
+                "password": "string"
+              },
+              options: Options(headers: {
+                "Authorization": "Bearer token",
+              }));
 
       print(response);
       print('- - - - - - - - - - -');
@@ -104,18 +110,37 @@ class _MyHomePageState extends State<MyHomePage> {
         }).then((value) {
       print('SUCCESS');
     }).catchError((error) {
-      if(error is DioError){
+      if (error is DioError) {
         print(error.response!.data['message']);
       }
     });
   }
 
-  void loginWithApple(){
+  void loginWithApple() {
     // some code
   }
 
-  void loginWithFacebook(){
+  void loginWithFacebook() {
     // some code
+  }
+
+  void save() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString("username", "Amir");
+    await prefs.setString("language", "Amir");
+    await prefs.setString("theme", "Amir");
+    await prefs.setString("apiToken", "Amir");
+    await prefs.setString("userId", "Amir");
+    await prefs.setString("userEmail", "Amir");
+
+    final String username = prefs.getString('username') ?? "";
+
+    PreferenceUtils.setString(SharedKeys.username, "Amir");
+
+    String name = PreferenceUtils.getString(SharedKeys.username);
+
+    String apiToken = PreferenceUtils.getString(SharedKeys.apiToken);
   }
 
   @override
