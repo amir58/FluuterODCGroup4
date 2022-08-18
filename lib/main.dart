@@ -110,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void loginWithGoogle(){
+  void loginWithApple(){
     // some code
   }
 
